@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Unit Converter</title>
+    <style>
+        body {
+            background-color: #FFA500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .converter-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #FFA500;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            background: #FFA500;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-weight: bold;
+            color: #FFA500;
+        }
+    </style>
+</head>
+<body>
+<div class="converter-box">
+    <form th:action="@{/convert}" method="post" th:object="${conversionRequest}">
+        <div class="form-group">
+            <label>Категория:</label>
+            <select name="category" id="category" th:field="*{category}" required>
+                <option value="">Выберите категорию</option>
+                <option value="length">Длина</option>
+                <option value="weight">Вес</option>
+                <option value="temperature">Температура</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Из:</label>
+            <select name="fromUnit" id="fromUnit" th:field="*{fromUnit}" required></select>
+        </div>
+
+        <div class="form-group">
+            <label>В:</label>
+            <select name="toUnit" id="toUnit" th:field="*{toUnit}" required></select>
+        </div>
+
+        <div class="form-group">
+            <label>Значение:</label>
+            <input type="number" step="any" name="value" th:field="*{value}" required>
+        </div>
+
+        <button type="submit">Конвертировать</button>
+    </form>
+
+    <div class="result" th:if="${conversionResponse}">
+        <span th:text="'Результат: ' + ${conversionResponse.value}"></span>
+        <div th:if="${conversionResponse.message}"
+             th:text="${conversionResponse.message}"
+             style="color: red; margin-top: 0.5rem;">
+        </div>
+    </div>
+</div>
+
+<script>
+    const unitsMap = {
+        length: ['Километры', 'Мили'],
+        weight: ['Килограммы', 'Фунты'],
+        temperature: ['Цельсий', 'Фаренгейт']
+    };
+
+    document.getElementById('category').addEventListener('change', function() {
+        const category = this.value;
+        const fromUnit = document.getElementById('fromUnit');
+        const toUnit = document.getElementById('toUnit');
+
+        fromUnit.innerHTML = '';
+        toUnit.innerHTML = '';
+
+        if (category) {
+            unitsMap[category].forEach(unit => {
+                const option = document.createElement('option');
+                option.value = unit;
+                option.textContent = unit;
+                fromUnit.appendChild(option.cloneNode(true));
+                toUnit.appendChild(option);
+            });
+        }
+    });
+</script>
+</body>
+</html>
