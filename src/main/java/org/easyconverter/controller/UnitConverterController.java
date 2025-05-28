@@ -24,6 +24,8 @@ public class UnitConverterController {
     @PostMapping("/convert")
     public String convert(@ModelAttribute ConversionRequest request,
                           Model model){
+        System.out.println(request.getCategory() + " " + request.getFromUnit()
+                + " " + request.getToUnit() + " " + request.getValue());
         ConverterFactory factory = new ConverterFactory();
         Optional<Double> convertedValue = factory.convert(request);
 
